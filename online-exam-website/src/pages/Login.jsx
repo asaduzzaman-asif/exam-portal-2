@@ -8,11 +8,11 @@ export default function Login() {
   const [isSignUp, setIsSignUp] = useState(false);
   
   const [phone, setPhone] = useState('');
-  const [name, setName] = useState(''); // স্টুডেন্টের নাম নেওয়ার জন্য নতুন স্টেট
+  const [name, setName] = useState(''); // স্টুডেন্টের নাম নেওয়ার জন্য নতুন স্টেট
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // কেউ আগে থেকেই লগইন থাকলে তাকে সরাসরি ড্যাশবোর্ডে পাঠিয়ে দেবে
+  // কেউ আগে থেকেই লগইন থাকলে তাকে সরাসরি ড্যাশবোর্ডে পাঠিয়ে দেবে
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -57,10 +57,14 @@ export default function Login() {
         if (profileError) {
           toast.error("Profile Error: " + profileError.message);
         } else {
-          toast.success("Account Created Successfully! Please login now.");
-          setIsSignUp(false); // সাকসেস হলে লগইন ফর্মে পাঠিয়ে দেবে
-          setName('');
-          setPassword('');
+          // --- নতুন লজিক: সাইন-আপ হলেই সরাসরি লগইন করিয়ে ড্যাশবোর্ডে পাঠানো ---
+          toast.success("Account Created & Logged in Successfully!");
+          
+          if (phone === 'admin') {
+            navigate('/admin-dashboard');
+          } else {
+            navigate('/user-dashboard');
+          }
         }
       }
     } else {
@@ -94,7 +98,7 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* সাইন-আপ মোডে থাকলে নাম দেওয়ার ফিল্ড দেখাবে */}
+          {/* সাইন-আপ মোডে থাকলে নাম দেওয়ার ফিল্ড দেখাবে */}
           {isSignUp && (
             <div>
               <label className="block text-gray-700 font-bold mb-2">Full Name</label>
